@@ -11,8 +11,9 @@ import SearchIcon from './SearchIcon';
 
 interface InputProps {
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  onFocus: React.FocusEventHandler<HTMLInputElement>;
 }
-const InputTodo = ({ setTodos }: InputProps) => {
+const InputTodo = ({ setTodos, onFocus }: InputProps) => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { ref, setFocus } = useFocus<HTMLInputElement>();
@@ -67,6 +68,7 @@ const InputTodo = ({ setTodos }: InputProps) => {
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         disabled={isLoading}
+        onFocus={onFocus}
       />
       {!isLoading ? null : <FaSpinner className="spinner" />}
     </form>
