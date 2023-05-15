@@ -7,6 +7,7 @@ import { Todo } from '../@types/todos';
 import { getSuggestion } from '../api/search';
 import { DEBOUNCE_DELAY_IN_MS } from '../utils/const';
 import useDebounce from '../hooks/useDebounce';
+import SearchIcon from './SearchIcon';
 
 interface InputProps {
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
@@ -58,6 +59,7 @@ const InputTodo = ({ setTodos }: InputProps) => {
 
   return (
     <form className="form-container" onSubmit={handleSubmit}>
+      <SearchIcon />
       <input
         className="input-text"
         placeholder="Add new todo..."
@@ -66,13 +68,7 @@ const InputTodo = ({ setTodos }: InputProps) => {
         onChange={(e) => setInputText(e.target.value)}
         disabled={isLoading}
       />
-      {!isLoading ? (
-        <button className="input-submit" type="submit">
-          <FaPlusCircle className="btn-plus" />
-        </button>
-      ) : (
-        <FaSpinner className="spinner" />
-      )}
+      {!isLoading ? null : <FaSpinner className="spinner" />}
     </form>
   );
 };
