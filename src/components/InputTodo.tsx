@@ -1,13 +1,11 @@
-import { FaPlusCircle, FaSpinner } from 'react-icons/fa';
+import { FaSpinner } from 'react-icons/fa';
 import { useCallback, useEffect, useState } from 'react';
 
 import { createTodo } from '../api/todo';
 import useFocus from '../hooks/useFocus';
 import { Todo } from '../@types/todos';
-import { getSuggestion } from '../api/search';
-import { DEBOUNCE_DELAY_IN_MS } from '../utils/const';
-import useDebounce from '../hooks/useDebounce';
 import SearchIcon from './SearchIcon';
+import { useSearchDispatch } from '../context/SearchContext';
 
 interface InputProps {
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
@@ -17,17 +15,17 @@ const InputTodo = ({ setTodos, onFocus }: InputProps) => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { ref, setFocus } = useFocus<HTMLInputElement>();
-  const debouncedKeyword = useDebounce<string>(inputText.trim(), DEBOUNCE_DELAY_IN_MS);
+
+  const { changeInputText } = useSearchDispatch();
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    changeInputText(e.target.value);
+    setInputText(e.target.value);
+  };
 
   useEffect(() => {
     setFocus();
   }, [setFocus]);
-
-  useEffect(() => {
-    if (debouncedKeyword) {
-      getSuggestion({ keyword: debouncedKeyword, page: 1 });
-    }
-  }, [debouncedKeyword]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,7 +64,7 @@ const InputTodo = ({ setTodos, onFocus }: InputProps) => {
         placeholder="Add new todo..."
         ref={ref}
         value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
+        onChange={onChange}
         disabled={isLoading}
         onFocus={onFocus}
       />
