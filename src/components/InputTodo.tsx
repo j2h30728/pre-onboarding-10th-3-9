@@ -1,9 +1,9 @@
 import { FaSpinner } from 'react-icons/fa';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { createTodo } from '../api/todo';
-import useFocus from '../hooks/useFocus';
 import { Todo } from '../@types/todos';
+
 import SearchIcon from './SearchIcon';
 import { useSearchDispatch } from '../context/SearchContext';
 
@@ -14,18 +14,16 @@ interface InputProps {
 const InputTodo = ({ setTodos, onFocus }: InputProps) => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { ref, setFocus } = useFocus<HTMLInputElement>();
 
-  const { changeInputText } = useSearchDispatch();
+  const { controlKeyboard, changeInputText } = useSearchDispatch();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     changeInputText(e.target.value);
     setInputText(e.target.value);
   };
-
-  useEffect(() => {
-    setFocus();
-  }, [setFocus]);
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    controlKeyboard(e);
+  };
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,10 +60,10 @@ const InputTodo = ({ setTodos, onFocus }: InputProps) => {
       <input
         className="input-text"
         placeholder="Add new todo..."
-        ref={ref}
         value={inputText}
         onChange={onChange}
         disabled={isLoading}
+        onKeyDown={onKeyDown}
         onFocus={onFocus}
       />
       {!isLoading ? null : <FaSpinner className="spinner" />}
