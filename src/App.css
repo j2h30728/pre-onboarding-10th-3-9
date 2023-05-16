@@ -80,6 +80,7 @@ body {
 .btn-plus {
   color: darkcyan;
   font-size: 20px;
+  align-self: center;
 }
 
 .btn-trash {

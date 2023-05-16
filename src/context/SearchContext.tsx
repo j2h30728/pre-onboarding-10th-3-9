@@ -14,6 +14,7 @@ interface Dispatch {
   changeInputText: (newKeyword: string) => void;
   hoverSuggestion: (itemIndex: number) => void;
   inactivate: () => void;
+  active: (selectedSuggestion: string) => void;
 }
 
 const SearchContext = createContext<SearchState | null>(null);
@@ -43,6 +44,7 @@ export const SearchContextProvider = ({
 
   const hoverSuggestion = (itemIndex: number) => setActiveIndex(itemIndex);
   const inactivate = () => setActiveIndex(START_ACTIVE_INDEX);
+  const active = (selectedSuggestion: string) => setInputText(selectedSuggestion);
 
   const controlKeyboard = (e: React.KeyboardEvent) => {
     if (e.nativeEvent.isComposing || suggestions.length === 0) return;
@@ -79,7 +81,7 @@ export const SearchContextProvider = ({
   return (
     <SearchContext.Provider value={{ inputText, activeIndex, suggestions }}>
       <SearchDispatchContext.Provider
-        value={{ controlKeyboard, changeInputText, hoverSuggestion, inactivate }}
+        value={{ controlKeyboard, changeInputText, hoverSuggestion, inactivate, active }}
       >
         {children}
       </SearchDispatchContext.Provider>
