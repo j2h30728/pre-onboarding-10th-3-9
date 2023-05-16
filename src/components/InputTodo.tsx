@@ -1,21 +1,29 @@
-import { FaPlusCircle, FaSpinner } from 'react-icons/fa';
-import { useCallback, useEffect, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import { useCallback, useState } from 'react';
 
 import { createTodo } from '../api/todo';
-import useFocus from '../hooks/useFocus';
 import { Todo } from '../@types/todos';
+
+import SearchIcon from './SearchIcon';
+import { useSearchDispatch } from '../context/SearchContext';
 
 interface InputProps {
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  onFocus: React.FocusEventHandler<HTMLInputElement>;
 }
-const InputTodo = ({ setTodos }: InputProps) => {
+const InputTodo = ({ setTodos, onFocus }: InputProps) => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { ref, setFocus } = useFocus<HTMLInputElement>();
 
-  useEffect(() => {
-    setFocus();
-  }, [setFocus]);
+  const { controlKeyboard, changeInputText } = useSearchDispatch();
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    changeInputText(e.target.value);
+    setInputText(e.target.value);
+  };
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    controlKeyboard(e);
+  };
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,21 +56,17 @@ const InputTodo = ({ setTodos }: InputProps) => {
 
   return (
     <form className="form-container" onSubmit={handleSubmit}>
+      <SearchIcon />
       <input
         className="input-text"
         placeholder="Add new todo..."
-        ref={ref}
         value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
+        onChange={onChange}
         disabled={isLoading}
+        onKeyDown={onKeyDown}
+        onFocus={onFocus}
       />
-      {!isLoading ? (
-        <button className="input-submit" type="submit">
-          <FaPlusCircle className="btn-plus" />
-        </button>
-      ) : (
-        <FaSpinner className="spinner" />
-      )}
+      {!isLoading ? null : <FaSpinner className="spinner" />}
     </form>
   );
 };
