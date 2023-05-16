@@ -7,12 +7,16 @@ interface DropdownItemProps {
 
 const DropdownItem = ({ index, children: name }: DropdownItemProps) => {
   const { inputText, activeIndex } = useSearchState();
-  const { hoverSuggestion, inactivate, changeInputText } = useSearchDispatch();
+  const { hoverSuggestion, changeInputText, inactivate, active } = useSearchDispatch();
   const onMouseEnter = () => hoverSuggestion(index);
-  const onClick = () => changeInputText(name);
+  const onClick = () => {
+    active(name);
+    changeInputText(name);
+  };
 
   const keywordRegex = new RegExp(`(${inputText})`, 'gi');
   const texts = name.split(keywordRegex);
+
   return (
     <button
       type="button"
